@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  id          Int           @id @default(autoincrement())
+  title       String
+  isbn        String
+  genre       Genre         @relation(fields: [genreId], references: [id])
+  genreId     Int
+  publication DateTime
+  price       Float
+  quantity    Int
+  reviews     Review[]
+  OrderDetail OrderDetail[]
+  Author      Author?       @relation(fields: [authorId], references: [id])
+  authorId    Int?
+  Publisher   Publisher?    @relation(fields: [publisherId], references: [id])
+  publisherId Int?
+}
+
+model Customer {
+  id      Int      @id @default(autoincrement())
+  name    String
+  address String
+  phone   String
+  email   String
+  orders  Order[]
+  reviews Review[]
+}
+
+model Order {
+  id           Int           @id @default(autoincrement())
+  customer     Customer      @relation(fields: [customerId], references: [id])
+  customerId   Int
+  orderDate    DateTime
+  totalPrice   Float
+  paymentInfo  String?
+  orderDetails OrderDetail[]
+}
+
+model OrderDetail {
+  id       Int   @id @default(autoincrement())
+  order    Order @relation(fields: [orderId], references: [id])
+  orderId  Int
+  book     Book  @relation(fields: [bookId], references: [id])
+  bookId   Int
+  quantity Int
+  price    Float
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  book       Book     @relation(fields: [bookId], references: [id])
+  bookId     Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId Int
+  rating     Int
+  text       String?
+}
+
+model Author {
+  id        Int     @id @default(autoincrement())
+  name      String
+  biography String?
+  books     Book[]
+}
+
+model Publisher {
+  id      Int    @id @default(autoincrement())
+  name    String
+  address String
+  phone   String
+  books   Book[]
+}
+
+model Genre {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  books       Book[]
+}

@@ -81,4 +81,5 @@ type Book {
 type Query {
   books: [Book!]!
   author(id: Int!): Book!
+  getBooksByGenre(genreName: String!): [Book!]!
 }
